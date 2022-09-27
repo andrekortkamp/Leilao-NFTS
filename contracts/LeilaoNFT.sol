@@ -25,13 +25,13 @@ contract LeilaoNFT {
     uint public nftId;
 
     address payable public seller;
-    uint public endAt;
+    uint32 public endAt;
     bool public started;
     bool public ended;
 
     address public highestBidder;
     uint public highestBid;
-    uint public timerAuction;
+    uint32 public timerAuction;
 
     mapping(address => uint) public bids;
 
@@ -39,7 +39,7 @@ contract LeilaoNFT {
         address _nft,
         uint _nftId,
         uint _startingBid,
-        uint _timerAuction
+        uint32 _timerAuction
     ) {
         nft = IERC721(_nft);
         nftId = _nftId;
@@ -49,13 +49,12 @@ contract LeilaoNFT {
         timerAuction = _timerAuction;
     }
 
-    function start() external {
+    function start() external onlyOwner {
         require(!started, "started");
-        require(msg.sender == seller, "not seller");
 
         nft.transferFrom(msg.sender, address(this), nftId);
         started = true;
-        endAt = block.timestamp + timerAuction;
+        endAt = uint32(block.timestamp + timerAuction);
 
         emit Start();
     }
@@ -76,6 +75,8 @@ contract LeilaoNFT {
     }
 
     function withdraw() external {
+        require(bids[msg.sender] != 0, "not bidder");
+        
         uint bal = bids[msg.sender];
         bids[msg.sender] = 0;
         payable(msg.sender).transfer(bal);
@@ -83,10 +84,11 @@ contract LeilaoNFT {
         emit Withdraw(msg.sender, bal);
     }
 
-    function end() external {
+    function end() external onlyOwner {
         require(started, "not started");
         //require(block.timestamp >= endAt, "not ended");
         require(!ended, "ended");
+
 
         ended = true;
         if (highestBidder != address(0)) {
@@ -98,4 +100,12 @@ contract LeilaoNFT {
 
         emit End(highestBidder, highestBid);
     }
+
+    //MODIFIERS
+
+    modifier onlyOwner() {
+    require(msg.sender == seller, "not owner");
+    _;
+  }
+
 }

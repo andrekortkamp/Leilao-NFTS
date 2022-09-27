@@ -70,34 +70,34 @@ const App = () => {
 	}
 
 	const getSeller = async () => {
-		let val = await contract.getSeller();
+		let val = await contract.seller();
 		setCurrentSeller(val);
 	}
 
 	const getBidder = async () => {
-		let val = await contract.gethighestBidder();
+		let val = await contract.highestBidder();
 		setCurrentBidder(val);
 	}
 
 	const getBid = async () => {
-		let val = await contract.gethighestBid();
+		let val = await contract.highestBid();
 		setCurrentBid(ethers.utils.formatEther(val));
 	}
 
 	const getTimer = async () => {
-		let val = await contract.gettimerAuction();
+		let val = await contract.timerAuction();
 		setCurrentTime(val/60);
 	}
 
 	const getStart = async () => {
-		const val = await contract.getstarted();
+		const val = await contract.started();
 		console.log(val)
 		setCurrentStart(val)
 		
 	}
 
 	const getEnd = async () => {
-		let val = await contract.getended();
+		let val = await contract.ended();
 		console.log(val)
 		setCurrentEnd(val);
 	}
@@ -125,7 +125,7 @@ const App = () => {
 
 		
 		<div>
-			<button className='buttons_get' onClick={getSeller}>Vendedor</button>
+			<button onClick={getSeller}>Vendedor</button>
 			<h1>{currentSeller}</h1>
 		</div>
 		<div>
