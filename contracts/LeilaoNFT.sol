@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+
 interface IERC721 {
     function safeTransferFrom(
         address from,
@@ -16,6 +18,8 @@ interface IERC721 {
 }
 
 contract LeilaoNFT {
+    using SafeMath for uint256;
+
     event Start();
     event Bid(address indexed sender, uint amount);
     event Withdraw(address indexed bidder, uint amount);
@@ -32,6 +36,7 @@ contract LeilaoNFT {
     address public highestBidder;
     uint public highestBid;
     uint32 public timerAuction;
+    uint public percentage;
 
     mapping(address => uint) public bids;
 
@@ -39,7 +44,8 @@ contract LeilaoNFT {
         address _nft,
         uint _nftId,
         uint _startingBid,
-        uint32 _timerAuction
+        uint32 _timerAuction,
+        uint _percentage
     ) {
         nft = IERC721(_nft);
         nftId = _nftId;
@@ -47,6 +53,7 @@ contract LeilaoNFT {
         seller = payable(msg.sender);
         highestBid = _startingBid;
         timerAuction = _timerAuction;
+        percentage = _percentage;
     }
 
     function start() external onlyOwner {
@@ -69,7 +76,7 @@ contract LeilaoNFT {
         }
 
         highestBidder = msg.sender;
-        highestBid = msg.value;
+        highestBid = (msg.value.mul(percentage)).div(10000);
 
         emit Bid(msg.sender, msg.value);
     }
