@@ -76,7 +76,7 @@ contract LeilaoNFT {
         }
 
         highestBidder = msg.sender;
-        highestBid = (msg.value.mul(percentage)).div(10000);
+        highestBid = (msg.value);
 
         emit Bid(msg.sender, msg.value);
     }
@@ -86,7 +86,7 @@ contract LeilaoNFT {
         
         uint bal = bids[msg.sender];
         bids[msg.sender] = 0;
-        payable(msg.sender).transfer(bal);
+        payable(msg.sender).transfer(bal.sub(percentage));
 
         emit Withdraw(msg.sender, bal);
     }

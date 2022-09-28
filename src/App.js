@@ -16,7 +16,7 @@ const App = () => {
 	const provider = new ethers.providers.Web3Provider(window.ethereum)
 	const ERC20_ABI = abi;
 	
-	const address = '0xb3e561AD2Ca8C2039e2133FcEC446a8F88a170C3' 
+	const address = '0x5f9e0ED247BeD61Df529a224879dFEaF3D50Af05' 
 
 	const contract = new ethers.Contract(address, ERC20_ABI, provider)
 
@@ -45,10 +45,14 @@ const App = () => {
 
 	async function bid() {  
 		const ethAmount = document.getElementById("ethAmount").value
+		const fixedFee = "0.00025"
+		let res = parseFloat(ethAmount) + parseFloat(fixedFee)
+		res = res.toString()
+
 		const provider = new ethers.providers.Web3Provider(window.ethereum)
 		const signer = provider.getSigner()
 		const contract = new ethers.Contract(address, ERC20_ABI, signer)
-		const transactionResponse = await contract.bid({ value: ethers.utils.parseEther(ethAmount) })
+		const transactionResponse = await contract.bid({ value: ethers.utils.parseEther(res) })
 		await transactionResponse.wait()
 	}
 	
